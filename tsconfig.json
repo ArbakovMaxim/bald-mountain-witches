@@ -1,0 +1,13 @@
+{
+  "extends": "expo/tsconfig.base",
+  "compilerOptions": {
+    "strict": true,
+    "resolveJsonModule": true,
+    "esModuleInterop": true,
+    // Expo/Metro — сучасний bundler-резолвер. Перекриває застарілий
+    // "moduleResolution": "node" із expo/tsconfig.base (node10 видалено у TS 5.5+).
+    "module": "esnext",
+    "moduleResolution": "bundler"
+  },
+  "include": ["**/*.ts", "**/*.tsx"]
+}
