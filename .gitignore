@@ -147,3 +147,7 @@ vite.config.ts.timestamp-*
 dist/
 web-build/
 *.orig.*
+
+# Build artifacts
+*.aab
+*.apk

@@ -8,17 +8,21 @@ interface Props {
   counts: Record<string, number>;
   onAdd: (id: string) => void;
   onRemove: (id: string) => void;
+  /** true — досягнуто ліміт для режиму, додавати не можна. */
+  atMax?: boolean;
 }
 
-export function IngredientGrid({ counts, onAdd, onRemove }: Props) {
+export function IngredientGrid({ counts, onAdd, onRemove, atMax }: Props) {
   return (
     <View style={styles.grid}>
       {INGREDIENTS.map((ing) => {
         const count = counts[ing.id] ?? 0;
+        // Якщо ліміт досягнуто — приглушуємо ті, що не у казані (їх не додати).
+        const dimmed = atMax && count === 0;
         return (
           <TouchableOpacity
             key={ing.id}
-            style={styles.cell}
+            style={[styles.cell, dimmed && styles.cellDimmed]}
             onPress={() => onAdd(ing.id)}
             onLongPress={() => onRemove(ing.id)}
             delayLongPress={250}
@@ -59,6 +63,9 @@ const styles = StyleSheet.create({
     width: '23%',
     alignItems: 'center',
     gap: spacing(1.5),
+  },
+  cellDimmed: {
+    opacity: 0.35,
   },
   iconFrame: {
     width: '100%',

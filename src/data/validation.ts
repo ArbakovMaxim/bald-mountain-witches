@@ -7,6 +7,15 @@ export interface Validation {
 }
 
 /**
+ * Максимум інгредієнтів для режиму:
+ *  - Solo:  3
+ *  - Coven: players (кожна відьма кидає рівно 1 інгредієнт)
+ */
+export function maxIngredients(mode: Mode, players: number): number {
+  return mode === 'solo' ? 3 : players;
+}
+
+/**
  * Правила кількості інгредієнтів:
  *  - Solo:  1 ≤ N ≤ 3
  *  - Coven: 2 ≤ N ≤ players  (кожна відьма кидає рівно 1 інгредієнт)

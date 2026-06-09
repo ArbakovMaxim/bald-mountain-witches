@@ -18,7 +18,7 @@ import { Cauldron } from './src/components/Cauldron';
 import { ResultCard } from './src/components/ResultCard';
 import { BrewAnimation } from './src/components/BrewAnimation';
 import { findRecipe } from './src/data/recipes';
-import { validate } from './src/data/validation';
+import { validate, maxIngredients } from './src/data/validation';
 import type { Mode, Recipe } from './src/data/types';
 import { colors, fonts, radius, spacing } from './src/theme';
 
@@ -64,7 +64,12 @@ export default function App() {
   );
 
   const addIngredient = (id: string) =>
-    setCounts((prev) => ({ ...prev, [id]: (prev[id] ?? 0) + 1 }));
+    setCounts((prev) => {
+      // Не даємо перевищити максимум для поточного режиму.
+      const used = Object.values(prev).reduce((s, c) => s + c, 0);
+      if (used >= maxIngredients(mode, players)) return prev;
+      return { ...prev, [id]: (prev[id] ?? 0) + 1 };
+    });
 
   const removeIngredient = (id: string) =>
     setCounts((prev) => {
@@ -76,6 +81,38 @@ export default function App() {
     });
 
   const clearCauldron = () => setCounts({});
+
+  /** Підрізає набір під заданий максимум (прибирає зайве, зберігаючи решту). */
+  const trimToMax = (prev: Record<string, number>, max: number) => {
+    let used = Object.values(prev).reduce((s, c) => s + c, 0);
+    if (used <= max) return prev;
+    const next = { ...prev };
+    // прибираємо по одному, поки не вкладемось у ліміт
+    const ids = Object.keys(next);
+    let i = ids.length - 1;
+    while (used > max && i >= 0) {
+      const id = ids[i];
+      if (next[id] > 0) {
+        next[id] -= 1;
+        used -= 1;
+        if (next[id] === 0) delete next[id];
+      } else {
+        i -= 1;
+      }
+    }
+    return next;
+  };
+
+  // Зміна режиму/числа гравців може зменшити ліміт — підрізаємо набір.
+  const changeMode = (m: Mode) => {
+    setMode(m);
+    setCounts((prev) => trimToMax(prev, maxIngredients(m, players)));
+  };
+
+  const changePlayers = (n: number) => {
+    setPlayers(n);
+    setCounts((prev) => trimToMax(prev, maxIngredients(mode, n)));
+  };
 
   const brew = () => {
     if (!validation.ok || phase !== 'idle') return; // кнопка блокується на час анімації
@@ -110,9 +147,9 @@ export default function App() {
 
           <TopControls
             players={players}
-            onPlayersChange={setPlayers}
+            onPlayersChange={changePlayers}
             mode={mode}
-            onModeChange={setMode}
+            onModeChange={changeMode}
           />
 
           <Cauldron counts={counts} total={total} onRemove={removeIngredient} />
@@ -121,6 +158,7 @@ export default function App() {
             counts={counts}
             onAdd={addIngredient}
             onRemove={removeIngredient}
+            atMax={total >= maxIngredients(mode, players)}
           />
         </ScrollView>
 

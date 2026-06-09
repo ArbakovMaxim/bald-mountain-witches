@@ -1,6 +1,6 @@
 {
   "expo": {
-    "name": "Казан",
+    "name": "Cauldron",
     "slug": "kazan",
     "version": "1.0.0",
     "orientation": "portrait",
@@ -12,7 +12,9 @@
       "resizeMode": "contain",
       "backgroundColor": "#16110d"
     },
-    "assetBundlePatterns": ["**/*"],
+    "assetBundlePatterns": [
+      "**/*"
+    ],
     "ios": {
       "supportsTablet": true,
       "bundleIdentifier": "com.fefastudio.kazan"
@@ -21,13 +23,19 @@
       "package": "com.fefastudio.kazan",
       "versionCode": 1,
       "adaptiveIcon": {
-        "foregroundImage": "./assets/icon.png",
+        "foregroundImage": "./assets/adaptive-icon.png",
         "backgroundColor": "#16110d"
       }
     },
     "web": {
       "bundler": "metro",
       "favicon": "./assets/icon.png"
-    }
+    },
+    "extra": {
+      "eas": {
+        "projectId": "45f2b3ec-90df-429d-8149-267abe1b3077"
+      }
+    },
+    "owner": "fefaodessa"
   }
 }
